@@ -124,6 +124,25 @@ public class ObjectiveMysqlRepository implements ObjectiveRepository {
 		MysqlConnection.closeConnection();
 	}
 	
+	@Override
+	public boolean doesObjectiveBelongsToUser(int idObjective, int idUser) throws SQLException {
+		// TODO Auto-generated method stub
+		this.conn = MysqlConnection.getConnection();
+		try {
+			int idGroup = -1;
+			Statement stmt = conn.createStatement();
+			var query = "SELECT g.id FROM viculturadb.groups AS g, objectives AS o WHERE g.id_user = " + idUser + 
+					" and g.id = o.id_group and o.id = " + idObjective + ";";
+			ResultSet rset = stmt.executeQuery(query);
+			while(rset.next()) idGroup = rset.getInt("id");
+			if(idGroup == -1) return false;
+		}catch(SQLException ex) {
+			throw ex;
+		}
+		MysqlConnection.closeConnection();
+		return true;
+	}
+	
 	private Objective createObjectiveForGetAllByIdGroup(ResultSet rset) throws SQLException {
 		var objective = new Objective();
 		var material = new Material();

@@ -9,4 +9,5 @@ public interface ObjectiveRepository extends AddUpdate<Objective>, Delete{
 
 	public List<Objective> getAllByIdGroup(int idGroup, int idUser, int start, int limit) throws SQLException;
 	public int getTotalByIdGroup(int idGroup) throws SQLException;
+	public boolean doesObjectiveBelongsToUser(int idObjective, int idUser) throws SQLException;
 }

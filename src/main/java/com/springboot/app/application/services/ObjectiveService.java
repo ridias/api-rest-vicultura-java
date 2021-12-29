@@ -12,6 +12,7 @@ import com.springboot.app.application.dtos.RequestPaginationDto;
 import com.springboot.app.application.dtos.ResponseDto;
 import com.springboot.app.application.dtos.ResponsePaginationDto;
 import com.springboot.app.application.exceptions.DatabaseException;
+import com.springboot.app.application.exceptions.Forbidden;
 import com.springboot.app.application.exceptions.InvalidParameter;
 import com.springboot.app.application.exceptions.InvalidRequest;
 import com.springboot.app.application.exceptions.NotFound;
@@ -55,6 +56,11 @@ public class ObjectiveService {
 		var idGroup = request.body;
 		
 		try {
+			var groupInDb = this.groupRepository.getById(idGroup);
+			if(groupInDb.getId() == -1 || groupInDb.getIdUser() != idUser) 
+				return (ResponsePaginationDto<ObjectiveDto>) this.generateResponse.fail(new NotFound("The group does not belong to the user or the group does not exist, the id is " + idGroup));
+			
+			
 			int total = this.objectiveRepository.getTotalByIdGroup(idGroup);
 			int limit = request.getLimit() <= 0 ? 10 : request.getLimit();
 			int currentPage = request.getCurrentPage() <= 0 ? 1 : request.getCurrentPage();
@@ -118,7 +124,7 @@ public class ObjectiveService {
 			var groupInDb = this.groupRepository.getById(objectiveDto.getIdGroup());
 			if(groupInDb.getId() == -1 || groupInDb.getIdUser() != userId)
 				return this.generateResponse.fail(
-					new NotFound("The group where you are trying to insert an objective does not exist or does not belong to the user, the id is " + objectiveDto.getIdGroup())
+					new Forbidden("The group where you are trying to insert an objective does not exist or does not belong to the user, the id is " + objectiveDto.getIdGroup())
 				);
 			
 			objectiveAdded = this.objectiveRepository.add(objectiveToAdd);
@@ -148,7 +154,7 @@ public class ObjectiveService {
 			var groupInDb = this.groupRepository.getById(objectiveToUpdate.getIdGroup());
 			if(groupInDb.getId() == -1 || groupInDb.getIdUser() != userId) {
 				return this.generateResponse.fail(
-					new NotFound("The group where you're trying to update an objective does not exist or does not belong to the user, the id is " + objectiveDto.getIdGroup())
+					new Forbidden("The group where you're trying to update an objective does not exist or does not belong to the user, the id is " + objectiveDto.getIdGroup())
 				);
 			}
 			
@@ -167,9 +173,17 @@ public class ObjectiveService {
 			return this.generateResponseInt.fail(new InvalidRequest("The request is null!"));
 		
 		var id = request.body;
-		if(id <= 0) return this.generateResponseInt.fail(new InvalidParameter("The id to delete must be superior than 0"));
+		var userId = request.tokenDetails.getId();
+		
+		if(userId <= 0)
+			return this.generateResponseInt.fail(new InvalidParameter("The user id must be superior than 0"));
+		if(id <= 0) 
+			return this.generateResponseInt.fail(new InvalidParameter("The id to delete must be superior than 0"));
 		
 		try {
+			if(!this.objectiveRepository.doesObjectiveBelongsToUser(id, userId))
+				return this.generateResponseInt.fail(new Forbidden("You can't delete an objective that does not belong to the user"));
+			
 			this.objectiveRepository.delete(id);
 		}catch(SQLException ex) {
 			return this.generateResponseInt.fail(new DatabaseException(ex.getMessage()));
