@@ -159,6 +159,7 @@ public class UserMysqlRepository implements UserRepository{
 		user.setId(rset.getInt("id"));
 		user.setUsername(rset.getString("username"));
 		user.setEmail(rset.getString("email"));
+		user.setPassword(rset.getString("password"));
 		user.setDateCreated(rset.getTimestamp("date_created").toLocalDateTime());
 		return user;
 	}

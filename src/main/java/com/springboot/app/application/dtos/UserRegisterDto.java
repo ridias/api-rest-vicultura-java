@@ -1,21 +1,10 @@
 package com.springboot.app.application.dtos;
 
-import java.time.LocalDateTime;
-
 public class UserRegisterDto {
 	
 	private String username;
 	private String email;
 	private String password;
-	private LocalDateTime dateCreated;
-	
-	public LocalDateTime getDateCreated() {
-		return dateCreated;
-	}
-
-	public void setDateCreated(LocalDateTime dateCreated) {
-		this.dateCreated = dateCreated;
-	}
 
 	public String getUsername() {
 		return username;

@@ -10,7 +10,7 @@ public class UserRegisterMapper {
 		user.setUsername(userDto.getUsername());
 		user.setPassword(userDto.getPassword());
 		user.setEmail(userDto.getEmail());
-		user.setDateCreated(userDto.getDateCreated());
+		user.setDateCreated(null);
 		return user;
 	}
 	

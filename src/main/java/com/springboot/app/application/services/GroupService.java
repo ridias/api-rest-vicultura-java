@@ -63,6 +63,7 @@ public class GroupService {
 			
 		return this.generateResponse.ok(groupsDto);
 	}
+
 	
 	public ResponseDto<GroupDto> add(RequestDto<GroupDto> request) {
 		if(request == null) 

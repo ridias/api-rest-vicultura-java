@@ -22,9 +22,9 @@ public class GeneratorResponseHelper<T>{
 	public ResponsePaginationDto<T> ok(List<T> result, int currentPage, int limit, int total){
 		var response = new ResponsePaginationDto<T>();
 		boolean hasNextPage = (currentPage + 1) * limit <= total ? true : false ;
-		boolean hasPreviousPage = currentPage - 1 < 0 ? false : true;
+		boolean hasPreviousPage = currentPage - 1 <= 0 ? false : true;
 		int nextPage = (currentPage + 1) * limit <= total ? currentPage + 1 : -1;
-		int previousPage = currentPage - 1 < 0 ? -1 : currentPage - 1;
+		int previousPage = currentPage - 1 <= 0 ? -1 : currentPage - 1;
 		
 		response.setSuccess(true);
 		response.setTotalCount(result.size());
@@ -32,7 +32,7 @@ public class GeneratorResponseHelper<T>{
 		response.setCustomException(null);
 		response.setCurrentPage(currentPage);
 		response.setPageSize(limit);
-		response.setTotalPages((int)Math.floor(total / limit));
+		response.setTotalPages((int)Math.ceil(total / limit));
 		response.setHasNextPage(hasNextPage);
 		response.setHasPreviousPage(hasPreviousPage);
 		response.setNextPageNumber(nextPage);

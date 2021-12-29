@@ -129,7 +129,7 @@ public class MaterialService {
 		var materialDto = request.body;
 		var materialToAdd = this.materialMapper.createEntity(materialDto);
 		
-		if(!this.materialValidator.isValid(materialToAdd)) {
+		if(!this.materialValidator.isValidWithoutCheckingId(materialToAdd)) {
 			var messageError = this.materialValidator.getMessageError(materialToAdd);
 			return this.generateResponse.fail(new InvalidParameter(messageError));
 		}

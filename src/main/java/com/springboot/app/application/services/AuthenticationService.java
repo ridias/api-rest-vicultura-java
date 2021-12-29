@@ -65,6 +65,7 @@ public class AuthenticationService {
 			return this.generateResponse.fail(new InvalidParameter("The user details is null, something is wrong!"));
 		
 		User userToRegister = this.registerMapper.createEntity(userDetails);
+		userToRegister.setDateCreated(LocalDateTime.now());
 		
 		if(!this.userValidator.isValidWithoutCheckingId(userToRegister)) {
 			var messageError = this.userValidator.getMessageError(userToRegister);
